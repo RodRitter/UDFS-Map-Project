@@ -3,6 +3,7 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
+    font-family: 'Roboto', sans-serif;
 }
 
 body {
@@ -10,8 +11,58 @@ body {
 }
 
 .sidebar {
-    width: 300px;
+    width: 340px;
+    color: white;
+    padding: 10px;
     transition: width ease 0.5s;
+    background: rgb(50,29,85);
+    background: linear-gradient(328deg, rgba(50,29,85,1) 0%, rgba(56,35,68,1) 100%);    
+}
+
+.sidebar-heading {
+    margin: 0;
+    text-align: center;
+}
+
+.sidebar-icon {
+    display: block;
+    margin: 0 auto;
+}
+
+.filter-input {
+    box-sizing: border-box;
+    margin-top: 20px;
+    width: 100%;
+    border-radius: 2px;
+    border: none;
+    padding: 10px 5px;
+    font-size: 22px;
+}
+
+.location-list {
+    list-style: none;
+    padding: 0;
+    margin: 30px 0;
+}
+
+.location-icon {
+    height: 22px;
+    float: left;
+    margin: 15px 15px 15px 0;
+    transition: margin linear 0.1s;
+}
+
+.location {
+    height: 52px;
+    line-height: 52px;
+    font-size: 18px;
+    border-bottom: 1px solid white;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.location:hover .location-icon {
+    margin-right: 30px;
 }
 
 #map {
