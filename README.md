@@ -10,8 +10,8 @@ TODO
 If you have your own local webserver, then you can use that.
 
 First make sure you're in the project root.
-`$ npm install` - This will install the webserver
-`$ http-server` - This will start an instance of the webserver
+- `$ npm install` - This will install the webserver
+- `$ http-server` - This will start an instance of the webserver
 
 You should see something like this:
 ```
