@@ -17,7 +17,7 @@ var Foursquare = function() {
             type: "GET",
             success: callback,
             error: function(error) {
-                $('.loading').html("Could not load data");
+                $('.poi-loading').html("Could not load data");
             }
         });
     }

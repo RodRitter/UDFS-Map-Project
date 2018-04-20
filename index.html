@@ -22,7 +22,9 @@
                 <span data-bind="text: $data.name"></span>
             </li>
         </ul>
+        <p class="loc-loading loading">Loading...</p>
 
+        <hr class="divider">
         <h1 class="sidebar-heading">Points of Interest</h1>
         <p class="powered-by">Powered by <span class="fs-pb">FourSquare</span></p>
 
@@ -32,7 +34,7 @@
                 <span data-bind="text: $data.name">Test</span>
             </li>
         </ul>
-        <p class="loading">Loading...</p>
+        <p class="poi-loading loading">Loading...</p>
     </aside>
 
     <div id="map"></div>
@@ -44,7 +46,7 @@
     <script src="js/foursquare.js"></script>
     <script src="js/app.js"></script>
     <script async defer
-        src="http://maps.googleapis.com/maps/api/js?libraries=geometry&v=3&key=AIzaSyCLFW051gBxFk37HpdDOGaxLVDS1dhiekU&callback=initMap">
+        src="http://maps.googleapis.com/maps/api/js?libraries=geometry,places&v=3&key=AIzaSyCJwOpwQ9jwAsoGqX6Qyeg2sXbIWKn0ve0&callback=initMap">
     </script>
 </body>
 </html>

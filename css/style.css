@@ -32,6 +32,11 @@ body {
     margin: 0 auto;
 }
 
+.divider {
+    border-color: #6f657d;
+    margin: 25px 0;
+}
+
 .filter-input {
     box-sizing: border-box;
     margin-top: 20px;

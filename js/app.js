@@ -48,7 +48,7 @@ var ViewModel = function() {
         // So it can update it
         self.pointsOfInterest.valueHasMutated()
 
-        $('.loading').toggleClass('hidden');
+        $('.poi-loading').toggleClass('hidden');
 
         dropPOIMarkers(self.pointsOfInterest());
     });

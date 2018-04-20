@@ -6,14 +6,24 @@ var markers = [];
 var poiMarkers = [];
 var infoWindow = null;
 var bounds;
+var loadCount = 0;
 
-var locations = [
+var coords = [
     {name: 'Dropkick Murphy\'s', coords: {lat: -29.826942, lng: 31.015563}},
     {name: 'The Panorama Bar', coords: {lat: -29.841684, lng: 31.034789}},
     {name: 'Unity Brasserie', coords: {lat: -29.843768, lng: 30.994277}},
     {name: 'Vill-Inns Pub', coords: {lat: -29.851362, lng: 30.996509}},
     {name: 'Three Monkeys Bar & Restaurant', coords: {lat: -29.852255, lng: 31.021400}},
     {name: 'The Chairman', coords: {lat: -29.866547, lng: 31.044402}}
+];
+
+var locations = [
+    // {name: 'Dropkick Murphy\'s', coords: {lat: -29.826942, lng: 31.015563}},
+    // {name: 'The Panorama Bar', coords: {lat: -29.841684, lng: 31.034789}},
+    // {name: 'Unity Brasserie', coords: {lat: -29.843768, lng: 30.994277}},
+    // {name: 'Vill-Inns Pub', coords: {lat: -29.851362, lng: 30.996509}},
+    // {name: 'Three Monkeys Bar & Restaurant', coords: {lat: -29.852255, lng: 31.021400}},
+    // {name: 'The Chairman', coords: {lat: -29.866547, lng: 31.044402}}
 ];
 
 var poiLocations = [];
@@ -30,35 +40,48 @@ function initMap() {
         mapTypeControl: false
     });
 
-    // Create Markers
-    for(i in locations) {
-        loc = locations[i];
-        addLocation(locations[i], i);
+    // Search Google Places
+    
+    var placesService = new google.maps.places.PlacesService(map);
+    for(i in coords) {
+        var request = {
+            location: coords[i].coords,
+            query: coords[i].name,
+            radius: '50'
+        };
+
+        placesService.textSearch(request, function(data) {
+            locations.push(data[0]);
+            addLocation(locations[locations.length-1]);
+            loadCount++
+
+            if(loadCount == coords.length) {
+                // Done loading all places. Update ViewModel.locationArray with locations somehow
+            }
+        });
+        
     }
+
+
 }
 
-function resetMap() {
-    for(i in markers) {
-        markers[i].setMap(null);
-    }
+function addLocation(location) {
 
-    markers = [];
+    var id = locations.indexOf(location);
 
-    // Create Markers
-    for(i in locations) {
-        loc = locations[i];
-        addLocation(locations[i], i);
-    }
-}
+    format_address = location.formatted_address.replace(/\, /gi, ',<br />');
 
-function addLocation(location, id) {
     var marker = new google.maps.Marker({
-        position: location.coords,
+        position: {lat: location.geometry.location.lat(), lng: location.geometry.location.lng()},
         map: map,
         title: location.name,
         id: id,
         icon: getIcon('bar'),
-        animation: google.maps.Animation.DROP
+        animation: google.maps.Animation.DROP,
+        other: {
+            rating: location.rating,
+            address: format_address
+        }
     });
 
     marker.addListener('click', function() {
@@ -72,8 +95,7 @@ function addLocation(location, id) {
         }
     });
 
-    markers.push(marker);
-    locations[id].id = id;
+    markers[id] = marker;
     locations[id].marker = markers[id];
     showMarker(marker.id)
 }
@@ -81,7 +103,22 @@ function addLocation(location, id) {
 function openInfoWindow(marker) {
     if(infoWindow.marker != marker) {
         infoWindow.marker = marker;
-        infoWindow.setContent('<h3>'+ marker.title +'</h3>');
+        infoWindow.setContent('<h3 style="margin: 5px 0;">'+ marker.title +'</h3> \
+        <div style="margin: 5px 0"><span style="font-weight: bold">Rating:</span> '+ marker.other.rating +'</div> \
+        <div><span style="font-weight: bold">Address:</span> <br />'+ marker.other.address +'</div>');
+        infoWindow.open(map, marker);
+
+        infoWindow.addListener('closeclick', function(){
+            infoWindow.marker = null;
+            marker.setAnimation(null);
+        });
+    }
+}
+
+function openInfoWindowPOI(marker) {
+    if(infoWindow.marker != marker) {
+        infoWindow.marker = marker;
+        infoWindow.setContent('<h3 style="margin: 5px 0;">'+ marker.title +'</h3>');
         infoWindow.open(map, marker);
 
         infoWindow.addListener('closeclick', function(){
@@ -108,7 +145,7 @@ function handleItemClick(index) {
 function handlePOIClick(index) {
     var marker = poiMarkers[index];
     if(marker){
-        openInfoWindow(marker);
+        openInfoWindowPOI(marker);
 
         if (marker.getAnimation() === null) {
             setTimeout(function(){
@@ -140,9 +177,7 @@ function showAllMarkers() {
 
 function hideAllMarkers() {
     for(i in markers) {
-        if(markers[i].type !== 'POI') {
-            hideMarker(i);
-        }
+        hideMarker(i);
     }
 }
 
@@ -175,7 +210,7 @@ function dropPOIMarker(locations, id) {
     });
 
     marker.addListener('click', function() {
-        openInfoWindow(marker);
+        openInfoWindowPOI(marker);
     });
 
     poiMarkers.push(marker);
