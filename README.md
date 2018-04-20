@@ -7,8 +7,8 @@ This is a map that shows a few local Bars in the Durban area, as well as local a
 - Knockout.JS
 - jQuery
 - APIS:
- -- Google Maps API
- -- Foursquare API
+  - Google Maps API
+  - Foursquare API
 
 # Running the local webserver (optional)
 *If you have your own local webserver, then you can use that.*
