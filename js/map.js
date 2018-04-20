@@ -81,13 +81,8 @@ function addLocation(location, id) {
 function openInfoWindow(marker) {
     if(infoWindow.marker != marker) {
         infoWindow.marker = marker;
-        infoWindow.setContent(marker.title);
+        infoWindow.setContent('<h3>'+ marker.title +'</h3>');
         infoWindow.open(map, marker);
-
-        // If We want to 'zoom' into the selected location
-        // var bounds = new google.maps.LatLngBounds();
-        // bounds.extend(marker.position);
-        // map.fitBounds(bounds);
 
         infoWindow.addListener('closeclick', function(){
             infoWindow.marker = null;
@@ -188,6 +183,8 @@ function dropPOIMarker(locations, id) {
     loc.marker = poiMarkers[i];
     poiLocations.push(loc);
 }
+
+
 
 function getStyles() {
     return [
