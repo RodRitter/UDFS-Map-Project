@@ -3,6 +3,7 @@
  */
 var map;
 var markers = [];
+var poiMarkers = [];
 var infoWindow = null;
 var bounds;
 
@@ -15,6 +16,8 @@ var locations = [
     {name: 'The Chairman', coords: {lat: -29.866547, lng: 31.044402}}
 ];
 
+var poiLocations = [];
+
 function initMap() {
     infoWindow = new google.maps.InfoWindow();
     bounds = new google.maps.LatLngBounds();
@@ -26,6 +29,20 @@ function initMap() {
         styles: getStyles(),
         mapTypeControl: false
     });
+
+    // Create Markers
+    for(i in locations) {
+        loc = locations[i];
+        addLocation(locations[i], i);
+    }
+}
+
+function resetMap() {
+    for(i in markers) {
+        markers[i].setMap(null);
+    }
+
+    markers = [];
 
     // Create Markers
     for(i in locations) {
@@ -93,13 +110,27 @@ function handleItemClick(index) {
     }
 }
 
-function getIcon(name) {
+function handlePOIClick(index) {
+    var marker = poiMarkers[index];
+    if(marker){
+        openInfoWindow(marker);
+
+        if (marker.getAnimation() === null) {
+            setTimeout(function(){
+                marker.setAnimation(null);
+            }, 700)
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+    }
+}
+
+function getIcon(name, size={w:32, h:37}) { // Default size
     marker = new google.maps.MarkerImage(
         './img/'+ name +'.png',
-        new google.maps.Size(32, 37),
+        new google.maps.Size(size.w, size.h),
         new google.maps.Point(0, 0),
         new google.maps.Point(0, 0),
-        new google.maps.Size(32, 37)
+        new google.maps.Size(size.w, size.h)
     );
 
     return marker;
@@ -114,7 +145,9 @@ function showAllMarkers() {
 
 function hideAllMarkers() {
     for(i in markers) {
-        hideMarker(i);
+        if(markers[i].type !== 'POI') {
+            hideMarker(i);
+        }
     }
 }
 
@@ -126,6 +159,34 @@ function showMarker(id) {
 
 function hideMarker(id) {
     markers[id].setMap(null);
+}
+
+function dropPOIMarkers(allLocations) {
+    for(i in allLocations) {
+        dropPOIMarker(allLocations, i);
+    }
+}
+
+function dropPOIMarker(locations, id) {
+    loc = locations[i];
+
+    var marker = new google.maps.Marker({
+        position: loc.coords,
+        map: map,
+        title: loc.name,
+        id: id,
+        icon: getIcon('poi', {w:28,h:33}),
+        animation: google.maps.Animation.DROP
+    });
+
+    marker.addListener('click', function() {
+        openInfoWindow(marker);
+    });
+
+    poiMarkers.push(marker);
+    loc.id = id;
+    loc.marker = poiMarkers[i];
+    poiLocations.push(loc);
 }
 
 function getStyles() {

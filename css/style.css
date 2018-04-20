@@ -8,13 +8,16 @@ body {
 
 body {
     display: flex;
+    background: #24282b;
 }
 
 .sidebar {
+    box-sizing: border-box;
     width: 340px;
     color: white;
     padding: 10px;
-    transition: width ease 0.5s;
+    transition: width ease 0.3s;
+    overflow: auto;
     background: rgb(50,29,85);
     background: linear-gradient(328deg, rgba(50,29,85,1) 0%, rgba(56,35,68,1) 100%);    
 }
@@ -61,6 +64,16 @@ body {
     overflow: hidden;
 }
 
+.poi-icon {
+    height: 16px;
+}
+
+.poi {
+    height: 40px;
+    font-size: 14px;
+    color: #9282a9;
+}
+
 .location:hover .location-icon {
     margin-right: 30px;
 }
@@ -68,4 +81,47 @@ body {
 #map {
     height: 100%;
     flex: 1;
+}
+
+.powered-by {
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+}
+
+.fs-pb {
+    font-weight: bold;
+    color: #0732a2;
+    text-transform: uppercase;
+    font-size: 15px;
+    padding:5px;
+    background: white;
+    margin: 0 5px;
+}
+
+.loading {
+    text-align: center;
+    font-size: 20px;
+    color: #ac97c7;
+}
+
+.hidden {
+    display: none;
+}
+
+@media only screen and (max-width: 900px) {
+    body {
+        display: block;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .location-list,
+    .sidebar-heading,
+    .powered-by {
+        display: none;
+    }
 }

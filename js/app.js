@@ -4,9 +4,10 @@ var ViewModel = function() {
 
     this.locationArray = ko.observableArray(locations);
     this.filter = ko.observable();
+    this.pointsOfInterest = ko.observableArray();
 
     // Filters the list by the text input
-    filtered = ko.computed(function(){
+    this.filtered = ko.computed(function(){
         var all = self.locationArray();
         var fres = self.filter();
 
@@ -31,6 +32,25 @@ var ViewModel = function() {
             return all;
         }
         
+    });
+
+    // Get Foursqaure Points of Interest
+    var fs = new Foursquare();
+    fs.GetPointsOfInterest(function(data) {
+        var venues = data.response.venues;
+        for(i in venues) {
+            p = venues[i];
+            point = {name: p.name, coords: {lat: p.location.lat, lng: p.location.lng}}
+            self.pointsOfInterest().push(point);
+        }
+
+        // Let the view know that this observable has changed
+        // So it can update it
+        self.pointsOfInterest.valueHasMutated()
+
+        $('.loading').toggleClass('hidden');
+
+        dropPOIMarkers(self.pointsOfInterest());
     });
 }
 
