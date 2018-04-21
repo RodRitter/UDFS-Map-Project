@@ -38,7 +38,7 @@ function initMap() {
 
 function addLocation(location) {
 
-    var id = locations.length+1;
+    var id = markers.length;
     location.pid = id;
 
     format_address = location.formatted_address.replace(/\, /gi, ',<br />');
@@ -48,7 +48,7 @@ function addLocation(location) {
         map: map,
         title: location.name,
         id: id,
-        icon: getIcon('bar'),
+      icon: getIcon('bar', {w:36, h:41}),
         animation: google.maps.Animation.DROP,
         other: {
             rating: location.rating === undefined ? "N/A" : location.rating,
@@ -62,14 +62,14 @@ function addLocation(location) {
         if (marker.getAnimation() === null) {
             setTimeout(function(){
                 marker.setAnimation(null);
-            }, 700)
+            }, 700);
             marker.setAnimation(google.maps.Animation.BOUNCE);
         }
     });
 
-    markers[id] = marker;
+    markers.push(marker);
     location.marker = markers[id];
-    showMarker(marker.id)
+    showMarker(marker.id);
 }
 
 function openInfoWindow(marker) {
@@ -90,7 +90,8 @@ function openInfoWindow(marker) {
 function openInfoWindowPOI(marker) {
     if(infoWindow.marker != marker) {
         infoWindow.marker = marker;
-        infoWindow.setContent('<h3 style="margin: 5px 0;">'+ marker.title +'</h3>');
+        infoWindow.setContent('<h3 style="margin: 5px 0;">'+ marker.title +'</h3> \
+        <p><b>Likes</b>: '+ marker.foursquare_data.likes +'</p>  <p><b>Here Now:</b> '+ marker.foursquare_data.hereNow +'</p>');
         infoWindow.open(map, marker);
 
         infoWindow.addListener('closeclick', function(){
@@ -100,42 +101,7 @@ function openInfoWindowPOI(marker) {
     }
 }
 
-function handleItemClick(id) {
-    var marker;
-    for(i in locations) {
-        if(locations[i].pid == id) {
-            marker = markers[id];
-        }
-    }
-
-    if(marker){
-        openInfoWindow(marker);
-        $('.sidebar').toggleClass('sidebar-closed');
-
-        if (marker.getAnimation() === null) {
-            setTimeout(function(){
-                marker.setAnimation(null);
-            }, 700)
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-        }
-    }
-}
-
-function handlePOIClick(index) {
-    var marker = poiMarkers[index];
-    if(marker){
-        openInfoWindowPOI(marker);
-
-        if (marker.getAnimation() === null) {
-            setTimeout(function(){
-                marker.setAnimation(null);
-            }, 700)
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-        }
-    }
-}
-
-function getIcon(name, size={w:36, h:41}) { // Default size
+function getIcon(name, size) { // Default size
     marker = new google.maps.MarkerImage(
         './img/'+ name +'.png',
         new google.maps.Size(size.w, size.h),
@@ -149,14 +115,14 @@ function getIcon(name, size={w:36, h:41}) { // Default size
 
 // Showing & Hiding
 function showAllMarkers() {
-    for(i in markers) {
+    for(var i=0; i<markers.length; i++) {
         showMarker(i);
     }
 }
 
 function hideAllMarkers() {
-    for(i in markers) {
-        hideMarker(i);
+    for(var i=0; i<markers.length; i++) {
+        hideMarker(markers[i].id);
     }
 }
 
@@ -171,13 +137,13 @@ function hideMarker(id) {
 }
 
 function dropPOIMarkers(allLocations) {
-    for(i in allLocations) {
+    for(var i=0; i<allLocations.length; i++) {
         dropPOIMarker(allLocations, i);
     }
 }
 
 function dropPOIMarker(locations, id) {
-    loc = locations[i];
+    loc = locations[id];
 
     var marker = new google.maps.Marker({
         position: loc.coords,
@@ -188,23 +154,22 @@ function dropPOIMarker(locations, id) {
         animation: google.maps.Animation.DROP
     });
 
+    marker.foursquare_data = loc;
+
     marker.addListener('click', function() {
         openInfoWindowPOI(marker);
     });
 
     poiMarkers.push(marker);
     loc.id = id;
-    loc.marker = poiMarkers[i];
+    loc.marker = poiMarkers[id];
     poiLocations.push(loc);
 }
 
 function googleError() {
-    alert('There was a problem with Google Maps API')
+    alert('There was a problem with Google Maps API');
 }
 
-$('.sidebar-toggle').click(function() {
-    $('.sidebar').toggleClass('sidebar-closed');
-});
 
 function getStyles() {
     return [

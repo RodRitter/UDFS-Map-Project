@@ -10,31 +10,32 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <a href="#" class="sidebar-toggle">Toggle</a>
-    <aside class="sidebar">
+    <a href="#" data-bind="click: toggleSidebar()" class="sidebar-toggle">Toggle</a>
+
+    <aside data-bind="css : {'sidebar-closed' : sidebarActive}" class="sidebar">
         <img src="img/beer-icon.png" alt="Beer Icon" class="sidebar-icon">
         <h1 class="sidebar-heading">Pub Crawler</h1>
 
         <input data-bind="textInput: filter" type="text" name="filter" class="filter-input" placeholder="Filter">
 
         <ul data-bind="foreach: filtered" class="location-list">
-            <li data-bind="click: handleItemClick.bind($data, $data.pid)" class="location">
+            <li data-bind="click: $parent.handleItemClick.bind($data, $data.pid)" class="location">
                 <img src="img/map-pin.png" alt="" class="location-icon"> 
                 <span data-bind="text: $data.name"></span>
             </li>
         </ul>
-        <p class="loc-loading loading">Loading...</p>
+        <p data-bind="css : {'hidden' : locNotLoading}, text: locLabel" class="loc-loading loading"></p>
 
         <h1 class="sidebar-heading">Points of Interest</h1>
         <p class="powered-by">Powered by <span class="fs-pb">FourSquare</span></p>
 
         <ul data-bind="foreach: pointsOfInterest" class="location-list">
-            <li data-bind="click: handlePOIClick.bind($data, $data.id)" class="location poi">
+            <li data-bind="click: $parent.handlePOIClick.bind($data, $data.id)" class="location poi">
                 <img src="img/map-pin.png" alt="" class="location-icon poi-icon"> 
                 <span data-bind="text: $data.name">Test</span>
             </li>
         </ul>
-        <p class="poi-loading loading">Loading...</p>
+        <p data-bind="css : {'hidden' : poiNotLoading}, text: poiLabel" class="poi-loading loading"></p>
     </aside>
 
     <div id="map"></div>
@@ -47,7 +48,7 @@
     <script src="js/app.js"></script>
     <script async defer
         src="http://maps.googleapis.com/maps/api/js?libraries=geometry,places&v=3&key=AIzaSyCJwOpwQ9jwAsoGqX6Qyeg2sXbIWKn0ve0&callback=initMap"
-        onerror="googleError">
+        onerror="googleError()">
     </script>
 </body>
 </html>

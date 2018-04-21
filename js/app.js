@@ -5,6 +5,11 @@ var ViewModel = function() {
     this.locationArray = ko.observableArray(locations);
     this.filter = ko.observable();
     this.pointsOfInterest = ko.observableArray();
+    this.sidebarActive = ko.observable(true);
+    this.locNotLoading = ko.observable(false);
+    this.poiNotLoading = ko.observable(false);
+    this.locLabel = ko.observable('Loading...');
+    this.poiLabel = ko.observable('Loading...');
 
     // Filters the list by the text input
     this.filtered = ko.computed(function(){
@@ -23,8 +28,8 @@ var ViewModel = function() {
             hideAllMarkers();
 
             // and then show the ones that match the filter
-            for(i in result) {
-                showMarker(result[i].pid)
+            for(var i=0; i<result.length; i++) {
+                showMarker(result[i].pid);
             }
     
             return result;
@@ -33,10 +38,54 @@ var ViewModel = function() {
         }
         
     });
+    
+    this.toggleSidebar = function() {
+        self.sidebarActive(!self.sidebarActive());
+        return;
+    };
+
+    this.handleItemClick = function(id) {
+        var marker;
+        for(var i=0; i<locations.length;i++) {
+            if(locations[i].pid == id) {
+                marker = markers[id];
+            }
+        }
+
+        if(marker){
+            openInfoWindow(marker);
+
+            if (marker.getAnimation() === null) {
+                setTimeout(function(){
+                    marker.setAnimation(null);
+                }, 700);
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        }
+
+        self.toggleSidebar();
+    }
+
+    this.handlePOIClick = function(index) {
+        var marker = poiMarkers[index];
+        if(marker){
+            openInfoWindowPOI(marker);
+    
+            if (marker.getAnimation() === null) {
+                setTimeout(function(){
+                    marker.setAnimation(null);
+                }, 700);
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        }
+        
+        self.toggleSidebar();
+    }
+
 
     // Get Google Places
     var placesService = new google.maps.places.PlacesService(map);
-    for(i in coords) {
+    for(var i=0; i<coords.length; i++) {
         var request = {
             location: coords[i].coords,
             query: coords[i].name,
@@ -47,14 +96,16 @@ var ViewModel = function() {
             if(status == google.maps.places.PlacesServiceStatus.OK) {
                 locations.push(data[0]);
                 addLocation(locations[locations.length-1]);
-                loadCount++
+                loadCount++;
 
                 if(loadCount == coords.length) {
                     self.locationArray.valueHasMutated();
-                    $('.loc-loading').toggleClass('hidden');
+                    self.sidebarActive(false);
                 }
+
+                self.locNotLoading(true);
             } else {
-                $('.loc-loading').html("Could not load data");
+                self.locLabel("Could not load data");
             }
         });
     }
@@ -62,19 +113,13 @@ var ViewModel = function() {
     // Get Foursqaure Points of Interest
     var fs = new Foursquare();
     fs.GetPointsOfInterest(function(data) {
-        var venues = data.response.venues;
-        for(i in venues) {
-            p = venues[i];
-            point = {name: p.name, coords: {lat: p.location.lat, lng: p.location.lng}}
-            self.pointsOfInterest().push(point);
-        }
-
+        self.pointsOfInterest(data);
+ 
         // Let the view know that this observable has changed
         // So it can update it
-        self.pointsOfInterest.valueHasMutated()
-
-        $('.poi-loading').toggleClass('hidden');
-
+        self.pointsOfInterest.valueHasMutated();
+        self.sidebarActive(false);
         dropPOIMarkers(self.pointsOfInterest());
+        self.poiNotLoading(true);
     });
-}
+};
