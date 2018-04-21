@@ -17,15 +17,7 @@ var coords = [
     {name: 'The Chairman', coords: {lat: -29.866547, lng: 31.044402}}
 ];
 
-var locations = [
-    // {name: 'Dropkick Murphy\'s', coords: {lat: -29.826942, lng: 31.015563}},
-    // {name: 'The Panorama Bar', coords: {lat: -29.841684, lng: 31.034789}},
-    // {name: 'Unity Brasserie', coords: {lat: -29.843768, lng: 30.994277}},
-    // {name: 'Vill-Inns Pub', coords: {lat: -29.851362, lng: 30.996509}},
-    // {name: 'Three Monkeys Bar & Restaurant', coords: {lat: -29.852255, lng: 31.021400}},
-    // {name: 'The Chairman', coords: {lat: -29.866547, lng: 31.044402}}
-];
-
+var locations = [];
 var poiLocations = [];
 
 function initMap() {
@@ -40,34 +32,14 @@ function initMap() {
         mapTypeControl: false
     });
 
-    // Search Google Places
-    
-    var placesService = new google.maps.places.PlacesService(map);
-    for(i in coords) {
-        var request = {
-            location: coords[i].coords,
-            query: coords[i].name,
-            radius: '50'
-        };
-
-        placesService.textSearch(request, function(data) {
-            locations.push(data[0]);
-            addLocation(locations[locations.length-1]);
-            loadCount++
-
-            if(loadCount == coords.length) {
-                // Done loading all places. Update ViewModel.locationArray with locations somehow
-            }
-        });
-        
-    }
-
-
+    // Only apply VM now
+    ko.applyBindings(new ViewModel());
 }
 
 function addLocation(location) {
 
-    var id = locations.indexOf(location);
+    var id = locations.length+1;
+    location.pid = id;
 
     format_address = location.formatted_address.replace(/\, /gi, ',<br />');
 
@@ -79,7 +51,7 @@ function addLocation(location) {
         icon: getIcon('bar'),
         animation: google.maps.Animation.DROP,
         other: {
-            rating: location.rating,
+            rating: location.rating === undefined ? "N/A" : location.rating,
             address: format_address
         }
     });
@@ -96,7 +68,7 @@ function addLocation(location) {
     });
 
     markers[id] = marker;
-    locations[id].marker = markers[id];
+    location.marker = markers[id];
     showMarker(marker.id)
 }
 
@@ -128,8 +100,14 @@ function openInfoWindowPOI(marker) {
     }
 }
 
-function handleItemClick(index) {
-    var marker = markers[index];
+function handleItemClick(id) {
+    var marker;
+    for(i in locations) {
+        if(locations[i].pid == id) {
+            marker = markers[id];
+        }
+    }
+
     if(marker){
         openInfoWindow(marker);
 
@@ -156,7 +134,7 @@ function handlePOIClick(index) {
     }
 }
 
-function getIcon(name, size={w:32, h:37}) { // Default size
+function getIcon(name, size={w:36, h:41}) { // Default size
     marker = new google.maps.MarkerImage(
         './img/'+ name +'.png',
         new google.maps.Size(size.w, size.h),
@@ -205,7 +183,7 @@ function dropPOIMarker(locations, id) {
         map: map,
         title: loc.name,
         id: id,
-        icon: getIcon('poi', {w:28,h:33}),
+        icon: getIcon('poi', {w:24,h:29}),
         animation: google.maps.Animation.DROP
     });
 

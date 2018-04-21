@@ -34,6 +34,31 @@ var ViewModel = function() {
         
     });
 
+    // Get Google Places
+    var placesService = new google.maps.places.PlacesService(map);
+    for(i in coords) {
+        var request = {
+            location: coords[i].coords,
+            query: coords[i].name,
+            radius: '50'
+        };
+
+        placesService.textSearch(request, function(data, status) {
+            if(status == google.maps.places.PlacesServiceStatus.OK) {
+                locations.push(data[0]);
+                addLocation(locations[locations.length-1]);
+                loadCount++
+
+                if(loadCount == coords.length) {
+                    self.locationArray.valueHasMutated();
+                    $('.loc-loading').toggleClass('hidden');
+                }
+            } else {
+                $('.loc-loading').html("Could not load data");
+            }
+        });
+    }
+
     // Get Foursqaure Points of Interest
     var fs = new Foursquare();
     fs.GetPointsOfInterest(function(data) {
@@ -53,5 +78,3 @@ var ViewModel = function() {
         dropPOIMarkers(self.pointsOfInterest());
     });
 }
-
-ko.applyBindings(new ViewModel());
