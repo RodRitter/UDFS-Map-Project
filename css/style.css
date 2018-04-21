@@ -124,4 +124,12 @@ body {
     .powered-by {
         display: none;
     }
+
+    .sidebar-icon {
+        width: 30px;
+    }
+
+    .filter-input {
+        font-size: 18px;
+    }
 }
