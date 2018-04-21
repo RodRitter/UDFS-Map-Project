@@ -3,7 +3,10 @@
 # Summary
 This is a map that shows a few local Bars in the Durban area, as well as local areas of interest.
 
-## Technologies
+# Usage
+No installation is required. Once you clone the files, simply open `index.html` in a browser.
+
+# Technologies
 - Knockout.JS
 - jQuery
 - APIS:

@@ -110,6 +110,10 @@ body {
     display: none;
 }
 
+.sidebar-toggle {
+    display: none;
+}
+
 @media only screen and (max-width: 900px) {
     body {
         display: block;
@@ -117,12 +121,20 @@ body {
 
     .sidebar {
         width: 100%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+        transition: left 0.15s linear;
     }
 
-    .location-list,
-    .sidebar-heading,
-    .powered-by {
-        display: none;
+    .sidebar-closed {
+        top: 0;
+        left: -100%;
+        right: 0;
+        transition: left 0.15s linear;
     }
 
     .sidebar-icon {
@@ -132,4 +144,21 @@ body {
     .filter-input {
         font-size: 18px;
     }
+
+    .sidebar-toggle {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        top: 10px;
+        left: 10px;
+        text-decoration: none;
+        background: white;
+        padding: 0 10px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        border-radius: 2px;
+        color: black;
+    }
+
 }

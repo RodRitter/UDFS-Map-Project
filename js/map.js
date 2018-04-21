@@ -110,6 +110,7 @@ function handleItemClick(id) {
 
     if(marker){
         openInfoWindow(marker);
+        $('.sidebar').toggleClass('sidebar-closed');
 
         if (marker.getAnimation() === null) {
             setTimeout(function(){
@@ -197,7 +198,13 @@ function dropPOIMarker(locations, id) {
     poiLocations.push(loc);
 }
 
+function googleError() {
+    alert('There was a problem with Google Maps API')
+}
 
+$('.sidebar-toggle').click(function() {
+    $('.sidebar').toggleClass('sidebar-closed');
+});
 
 function getStyles() {
     return [
