@@ -24,7 +24,7 @@ var ViewModel = function() {
 
             // and then show the ones that match the filter
             for(i in result) {
-                showMarker(result[i].id)
+                showMarker(result[i].pid)
             }
     
             return result;
